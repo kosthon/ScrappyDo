@@ -19,7 +19,7 @@ ChromeDriverManager().install()
 # Inicializar el navegador
 driver = webdriver.Chrome(options=options)
 
-driver.get('https://www.windy.com/es/-Presi%C3%B3n-pressure?pressure,42.163,-64.863,3,m:eM0adx7')
+driver.get('https://www.windy.com/es/-Temperatura-temp?temp')
 
 # Digitar coordenadas
 latitud = input("Ingresa la latitud: ")
@@ -36,7 +36,7 @@ textarea.click()
 time.sleep(3)
 
 # Escribir en el elemento
-textarea.send_keys(latitud + ',' + longitud)
+textarea.send_keys(latitud + ', ' + longitud)
 textarea.send_keys(Keys.ENTER)
 time.sleep(2)
 textarea.send_keys(Keys.ENTER)
@@ -44,24 +44,27 @@ time.sleep(2)
 textarea.send_keys(Keys.ENTER)
 time.sleep(3)
 
-# ciudad = driver.find_element_by_xpath('//div[@data-label="Bogotá" and @class="city-1"]')
-
-# ciudad.click()
-
 # Dar click en el boton buscar
 button = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, 'input.gNO89b'))
 )
-
+time.sleep(3)
 button.click()
+time.sleep(3)
 
-# Dar click en el link de CODALTEC
-link = WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable((By.CSS_SELECTOR, 'h3.LC20lb'))
+# Dar click en el boton de cerrar menu inferior
+closeButton = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.closing-x'))
 )
+time.sleep(3)
+closeButton.click()
+time.sleep(3)
 
-link.click()
-
+# Dar click en el dot del punto en el mapa
+    # time.sleep(3)
+    # dotLocation = WebDriverWait(driver, 10).until(
+    #     EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.leaflet-marker-icon.icon-dot'))
+    # )
 
 # Pausa de 5 segundos para visualizar el resultado
 time.sleep(10)
