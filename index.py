@@ -21,6 +21,10 @@ driver = webdriver.Chrome(options=options)
 
 driver.get('https://www.windy.com/es/-Presi%C3%B3n-pressure?pressure,42.163,-64.863,3,m:eM0adx7')
 
+# Digitar coordenadas
+latitud = input("Ingresa la latitud: ")
+longitud = input("Ingresa la longitud: ")
+
 # Esperar a que el elemento sea clickable
 textarea = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, 'input#q'))
@@ -32,7 +36,7 @@ textarea.click()
 time.sleep(3)
 
 # Escribir en el elemento
-textarea.send_keys('Bogotá')
+textarea.send_keys(latitud + ',' + longitud)
 textarea.send_keys(Keys.ENTER)
 time.sleep(2)
 textarea.send_keys(Keys.ENTER)
@@ -40,9 +44,9 @@ time.sleep(2)
 textarea.send_keys(Keys.ENTER)
 time.sleep(3)
 
-ciudad = driver.find_element_by_xpath('//div[@data-label="Bogotá" and @class="city-1"]')
+# ciudad = driver.find_element_by_xpath('//div[@data-label="Bogotá" and @class="city-1"]')
 
-ciudad.click()
+# ciudad.click()
 
 # Dar click en el boton buscar
 button = WebDriverWait(driver, 10).until(
