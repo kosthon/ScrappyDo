@@ -144,3 +144,34 @@ texto = element.text
 time.sleep(3)
 print('Celastrak: ' + texto)
 time.sleep(5)
+
+
+# CAPTURA DE DATOS DE UNIXTIMESTAMP
+driver.get('https://www.unixtimestamp.com/')
+
+inputTimestamp = driver.find_element(By.CSS_SELECTOR, 'input#timestamp')
+
+hora_juliana_element = driver.find_element(By.CSS_SELECTOR, 'div.epoch')
+hora_juliana = hora_juliana_element.text
+inputTimestamp.click()
+time.sleep(3)
+inputTimestamp.send_keys(hora_juliana)
+time.sleep(1)
+inputTimestamp.send_keys(Keys.ENTER)
+time.sleep(3)
+
+hora_element = driver.find_element(By.CSS_SELECTOR, 'span#hour1')
+minuto_element = driver.find_element(By.CSS_SELECTOR, 'span#minute1')
+segundo_element = driver.find_element(By.CSS_SELECTOR, 'span#second1')
+hora_local_element = driver.find_element(By.CSS_SELECTOR, 'td.local')
+
+hora = hora_element.text
+minuto = minuto_element.text
+segundo = segundo_element.text
+horaLocal = hora_local_element.text
+
+print('Hora local: ' + horaLocal)
+print('Hora Juliana: ' + hora_juliana)
+print('Hora UTC: ' + hora + ':' + minuto + ':' + segundo)
+
+# 5.934299471956952, -73.61576533067957
