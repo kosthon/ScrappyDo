@@ -7,6 +7,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import time
+import csv
+import os
+import re
+import json
 import pandas as pd
 import pyautogui
 
@@ -129,8 +133,8 @@ time.sleep(3)
 
 # Tomar la presion del picker
 pickerPresion = driver.find_element(By.CSS_SELECTOR, 'div.picker-content span[data-ref="content"] big[data-do="changeMetric"]')
-numberGrades = pickerPresion.text.split()[0]
-print('Presion: ' + numberGrades)
+numberPresion = pickerPresion.text.split()[0]
+print('Presion: ' + numberPresion)
 
 time.sleep(5)
 
@@ -139,10 +143,13 @@ time.sleep(5)
 driver.get('https://celestrak.org/NORAD/elements/gp.php?CATNR=56205')
 
 # Esperar a que el elemento sea clickable
-element = driver.find_element(By.CSS_SELECTOR, 'pre')
-texto = element.text
+celastrak_element = driver.find_element(By.CSS_SELECTOR, 'pre')
+textoCelastrak = celastrak_element.text
 time.sleep(3)
-print('Celastrak: ' + texto)
+textoCelastrak = textoCelastrak.replace("FACSAT-2", "")
+textoCelastrak = re.sub(r"^\d\s", "", textoCelastrak, flags=re.MULTILINE)
+textoCelastrak = textoCelastrak.strip()
+print('Celastrak: ' + textoCelastrak)
 time.sleep(5)
 
 
@@ -168,10 +175,45 @@ hora_local_element = driver.find_element(By.CSS_SELECTOR, 'td.local')
 hora = hora_element.text
 minuto = minuto_element.text
 segundo = segundo_element.text
+horaUTC = hora + ':' + minuto + ':' + segundo
+
 horaLocal = hora_local_element.text
 
 print('Hora local: ' + horaLocal)
 print('Hora Juliana: ' + hora_juliana)
-print('Hora UTC: ' + hora + ':' + minuto + ':' + segundo)
+print('Hora UTC: ' + horaUTC)
+
+time.sleep(5)
+
+# CAPTURA DE DATOS DESDE N2YO
+driver.get('https://www.n2yo.com/?s=56205')
+
+altitud_element = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, 'div#sataltkm'))
+)
+elevation_element = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, 'div#satel'))
+)
+
+altitud = altitud_element.text
+elevation = elevation_element.text
+
+time.sleep(5)
 
 # 5.934299471956952, -73.61576533067957
+
+# EXPORTACIÓN DE DATA A ARCHIVOS EXCEL
+# Ruta del archivo
+ruta_archivo = "datos.csv"
+# Crear una lista con los elementos individuales a escribir en cada columna
+fila = [numberGrades, numberPresion, textoCelastrak, horaLocal, hora_juliana, horaUTC, altitud, elevation]
+# Abrir el archivo CSV en modo escritura, utilizando el modo "append"
+with open(ruta_archivo, "a", newline="") as archivo_csv:
+    # Crear un objeto escritor CSV con el delimitador de coma
+    escritor_csv = csv.writer(archivo_csv, delimiter=',')
+    # Escribir la fila en el archivo CSV
+    escritor_csv.writerow(fila)
+print("Datos guardados en el archivo:", ruta_archivo)
+
+time.sleep(5)
+
