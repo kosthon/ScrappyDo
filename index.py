@@ -215,5 +215,65 @@ with open(ruta_archivo, "a", newline="") as archivo_csv:
     escritor_csv.writerow(fila)
 print("Datos guardados en el archivo:", ruta_archivo)
 
+
+# EXPORTACIÓN DE DATA A ARCHIVOS JSON
+ruta_archivojson = "datos.json"
+# Crear un diccionario con los datos de la consulta actual
+consulta_actual = {
+    "temperature": numberGrades,
+    "pressure": numberPresion,
+    "TLE": textoCelastrak,
+    "localTime": horaLocal,
+    "julianTime": hora_juliana,
+    "utcTime": horaUTC,
+    "altitude": altitud,
+    "elevation": elevation   
+}
+
+try:
+    with open(ruta_archivojson, "r") as archivo_json:
+        contenido_json = archivo_json.read()
+        if contenido_json:
+            consultas_previas = json.loads(contenido_json)
+        else:
+            consultas_previas = []
+except FileNotFoundError:
+    consultas_previas = []
+
+# Agregar los datos de la consulta actual a la lista de consultas previas
+consultas_previas.append(consulta_actual)
+
+# Guardar la lista actualizada en el archivo JSON
+with open(ruta_archivojson, "w") as archivo_json:
+    json.dump(consultas_previas, archivo_json)
+
+print("Datos guardados en el archivo JSON:", ruta_archivojson)
+
+
+# Crear objeto GeoJSON
+geojson = {
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [longitud, latitud]
+    },
+    "properties": {
+        "temperature": numberGrades,
+        "pressure": numberPresion,
+        "TLE": textoCelastrak,
+        "localTime": horaLocal,
+        "julianTime": hora_juliana,
+        "utcTime": horaUTC,
+        "altitude": altitud,
+        "elevation": elevation  
+    }
+}
+
+# Guardar información en archivo GeoJSON
+ruta_geojson = 'datos.geojson'
+with open(ruta_geojson, 'w') as archivo_geojson:
+    json.dump(geojson, archivo_geojson)
+print("Datos guardados en el archivo GeoJSON:", ruta_geojson)
+
 time.sleep(5)
 

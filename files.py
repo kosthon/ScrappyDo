@@ -21,13 +21,15 @@ ChromeDriverManager().install()
 # Inicializar el navegador
 driver = webdriver.Chrome(options=options)
 
-driver.get('https://www.windy.com/es/-Presi%C3%B3n-pressure?pressure,4.971,-71.785,7,m:dMwad5M')
+driver.get(
+    'https://www.windy.com/es/-Presi%C3%B3n-pressure?pressure,4.971,-71.785,7,m:dMwad5M')
 
 # Obtener información de la página
 
 # Esperar a que el elemento de temperatura sea visible
 temperatura_element = WebDriverWait(driver, 30).until(
-    EC.visibility_of_element_located((By.CSS_SELECTOR, 'big[data-do="changeMetric"]'))
+    EC.visibility_of_element_located(
+        (By.CSS_SELECTOR, 'big[data-do="changeMetric"]'))
 )
 temperatura = temperatura_element.text
 

@@ -1,0 +1,14 @@
+{
+    "type": "Feature",
+    "geometry": { "type": "Point", "coordinates": ["73.3573", "5.5469"] },
+    "properties": {
+        "temperature": "27",
+        "pressure": "1,012",
+        "TLE": "56205U 23054AD  23202.36427212  .00007410  00000+0  29879-3 0  9997\n56205  97.4026  97.0503 0012682 246.2823 113.7084 15.25041977 15391",
+        "localTime": "Fri Jul 21 2023 11:18:41 GMT-0500 (hora est\u00e1ndar de Colombia)",
+        "julianTime": "1689956321",
+        "utcTime": "11:18:49 AM",
+        "altitude": "510.04",
+        "elevation": "-32.8"
+    }
+}
