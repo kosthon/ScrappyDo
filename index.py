@@ -14,11 +14,16 @@ import json
 import pandas as pd
 import pyautogui
 
+import skyfield.api
+import skyfield.elementslib
+import sys
+import math
+
 # Opciones de navegación
 options = Options()
 options.add_argument('--start-maximized')
 options.add_argument('--disable-extensions')
-options.add_argument('--incognito') 
+options.add_argument('--incognito')
 
 # Instalar automáticamente el ChromeDriver
 ChromeDriverManager().install()
@@ -52,8 +57,10 @@ time.sleep(5)
 # Dar click en el dot del punto en el mapa
 # Realizar la acción de clic derecho utilizando pyautogui
 dotElement = WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.leaflet-marker-icon.icon-dot'))
+    EC.element_to_be_clickable(
+        (By.CSS_SELECTOR, 'div.leaflet-marker-icon.icon-dot'))
 )
+
 
 def perform_right_click(element):
     # Obtener la posición del elemento en la ventana del navegador
@@ -64,7 +71,7 @@ def perform_right_click(element):
     # Simular el clic derecho utilizando pyautogui
     pyautogui.moveTo(x, y)
     pyautogui.click(button='right')
-    
+
 
 perform_right_click(dotElement)
 time.sleep(3)
@@ -77,7 +84,8 @@ temperatureOption.click()
 time.sleep(3)
 
 # Tomar los grados del picker
-pickerGrades = driver.find_element(By.CSS_SELECTOR, 'div.picker-content span[data-ref="content"] big[data-do="changeMetric"]')
+pickerGrades = driver.find_element(
+    By.CSS_SELECTOR, 'div.picker-content span[data-ref="content"] big[data-do="changeMetric"]')
 numberGrades = pickerGrades.text.split()[0]
 print('Grados: ' + numberGrades)
 
@@ -107,8 +115,10 @@ time.sleep(5)
 # Dar click en el dot del punto en el mapa
 # Realizar la acción de clic derecho utilizando pyautogui
 dotElement = WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.leaflet-marker-icon.icon-dot'))
+    EC.element_to_be_clickable(
+        (By.CSS_SELECTOR, 'div.leaflet-marker-icon.icon-dot'))
 )
+
 
 def perform_right_click(element):
     # Obtener la posición del elemento en la ventana del navegador
@@ -119,7 +129,7 @@ def perform_right_click(element):
     # Simular el clic derecho utilizando pyautogui
     pyautogui.moveTo(x, y)
     pyautogui.click(button='right')
-    
+
 
 perform_right_click(dotElement)
 time.sleep(3)
@@ -132,7 +142,8 @@ presionOption.click()
 time.sleep(3)
 
 # Tomar la presion del picker
-pickerPresion = driver.find_element(By.CSS_SELECTOR, 'div.picker-content span[data-ref="content"] big[data-do="changeMetric"]')
+pickerPresion = driver.find_element(
+    By.CSS_SELECTOR, 'div.picker-content span[data-ref="content"] big[data-do="changeMetric"]')
 numberPresion = pickerPresion.text.split()[0]
 print('Presion: ' + numberPresion)
 
@@ -146,12 +157,45 @@ driver.get('https://celestrak.org/NORAD/elements/gp.php?CATNR=56205')
 celastrak_element = driver.find_element(By.CSS_SELECTOR, 'pre')
 textoCelastrak = celastrak_element.text
 time.sleep(3)
-textoCelastrak = textoCelastrak.replace("FACSAT-2", "")
-textoCelastrak = re.sub(r"^\d\s", "", textoCelastrak, flags=re.MULTILINE)
-textoCelastrak = textoCelastrak.strip()
-print('Celastrak: ' + textoCelastrak)
-time.sleep(5)
 
+try:
+    tle_lines = textoCelastrak.strip().splitlines()
+    if (len(tle_lines) > 2):
+        satellite = skyfield.api.EarthSatellite(
+            tle_lines[1], tle_lines[2], tle_lines[0])
+    elif (len(tle_lines) == 2):
+        satellite = skyfield.api.EarthSatellite(
+            tle_lines[0], tle_lines[1], "UNKNOWN")
+    else:
+        raise Exception("TLE data needs at least two lines.")
+except Exception as e:
+    print("Unable to decode TLE data. Make the sure TLE data is formatted correctly." + e)
+    exit(1)
+
+classifications = {
+    "U": "Unclassified",
+    "C": "Classified",
+    "S": "Secret"
+}
+classification = classifications.get(satellite.model.classification, "Unknown")
+xpdotp = 1440.0 / (2.0 * math.pi)
+TLE = {
+    "Norad_Id": satellite.model.satnum,
+    "International_Classification": classification,
+    "International_Designation": satellite.model.intldesg,
+    "Epoch_Time_(ISO)": satellite.epoch.utc_iso(),
+    "First_Derivative_Mean_Motion": satellite.model.ndot * xpdotp * 1440.0,
+    "Second_Derivative_Mean_Motion": satellite.model.nddot * xpdotp * 1440.0 * 1440.0,
+    "Inclination": math.degrees(satellite.model.inclo),
+    "Right_Ascension_of_the_Ascending_Node": math.degrees(satellite.model.nodeo),
+    "Eccentricity": satellite.model.ecco,
+    "Argument_of_Perigee": math.degrees(satellite.model.argpo),
+    "Mean_Anomaly": math.degrees(satellite.model.mo),
+    "Mean_Motion": (satellite.model.no_kozai * 60 * 24) / (2 * math.pi),
+    "Revolution_Number_at_Epoch": satellite.model.revnum
+}
+
+time.sleep(5)
 
 # CAPTURA DE DATOS DE UNIXTIMESTAMP
 driver.get('https://www.unixtimestamp.com/')
@@ -200,13 +244,12 @@ elevation = elevation_element.text
 
 time.sleep(5)
 
-# 5.934299471956952, -73.61576533067957
-
 # EXPORTACIÓN DE DATA A ARCHIVOS EXCEL
 # Ruta del archivo
 ruta_archivo = "datos.csv"
 # Crear una lista con los elementos individuales a escribir en cada columna
-fila = [numberGrades, numberPresion, textoCelastrak, horaLocal, hora_juliana, horaUTC, altitud, elevation]
+fila = [numberGrades, numberPresion, textoCelastrak,
+        horaLocal, hora_juliana, horaUTC, altitud, elevation]
 # Abrir el archivo CSV en modo escritura, utilizando el modo "append"
 with open(ruta_archivo, "a", newline="") as archivo_csv:
     # Crear un objeto escritor CSV con el delimitador de coma
@@ -220,16 +263,19 @@ print("Datos guardados en el archivo:", ruta_archivo)
 ruta_archivojson = "datos.json"
 # Crear un diccionario con los datos de la consulta actual
 consulta_actual = {
+    "latitude": latitud,
+    "longitude": longitud,
     "temperature": numberGrades,
     "pressure": numberPresion,
-    "TLE": textoCelastrak,
     "localTime": horaLocal,
     "julianTime": hora_juliana,
     "utcTime": horaUTC,
     "altitude": altitud,
-    "elevation": elevation   
+    "elevation": elevation,
+    "TLE": TLE,
 }
 
+# Cargar el contenido del archivo JSON solo si no está vacío
 try:
     with open(ruta_archivojson, "r") as archivo_json:
         contenido_json = archivo_json.read()
@@ -260,12 +306,12 @@ geojson = {
     "properties": {
         "temperature": numberGrades,
         "pressure": numberPresion,
-        "TLE": textoCelastrak,
         "localTime": horaLocal,
         "julianTime": hora_juliana,
         "utcTime": horaUTC,
         "altitude": altitud,
-        "elevation": elevation  
+        "elevation": elevation,
+        "TLE": TLE,
     }
 }
 
@@ -277,3 +323,5 @@ print("Datos guardados en el archivo GeoJSON:", ruta_geojson)
 
 time.sleep(5)
 
+
+# 5.934299471956952, -73.61576533067957

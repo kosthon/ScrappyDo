@@ -1,14 +1,31 @@
 {
     "type": "Feature",
-    "geometry": { "type": "Point", "coordinates": ["73.3573", "5.5469"] },
+    "geometry": {
+        "type": "Point",
+        "coordinates": ["-73.61576533067957", "5.934299471956952"]
+    },
     "properties": {
-        "temperature": "27",
-        "pressure": "1,012",
-        "TLE": "56205U 23054AD  23202.36427212  .00007410  00000+0  29879-3 0  9997\n56205  97.4026  97.0503 0012682 246.2823 113.7084 15.25041977 15391",
-        "localTime": "Fri Jul 21 2023 11:18:41 GMT-0500 (hora est\u00e1ndar de Colombia)",
-        "julianTime": "1689956321",
-        "utcTime": "11:18:49 AM",
-        "altitude": "510.04",
-        "elevation": "-32.8"
+        "temperature": "20",
+        "pressure": "1,014",
+        "localTime": "Mon Jul 24 2023 16:02:49 GMT-0500 (hora est\u00e1ndar de Colombia)",
+        "julianTime": "1690232569",
+        "utcTime": "4:02:58 PM",
+        "altitude": "489.85",
+        "elevation": "-45.8",
+        "TLE": {
+            "Norad_Id": 56205,
+            "International_Classification": "Unclassified",
+            "International_Designation": "23054AD",
+            "Epoch_Time_(ISO)": "2023-07-24T12:19:44Z",
+            "First_Derivative_Mean_Motion": 7.285e-5,
+            "Second_Derivative_Mean_Motion": 0.0,
+            "Inclination": 97.402,
+            "Right_Ascension_of_the_Ascending_Node": 100.16450000000002,
+            "Eccentricity": 0.0012864,
+            "Argument_of_Perigee": 233.7209,
+            "Mean_Anomaly": 126.28409999999998,
+            "Mean_Motion": 15.25088651,
+            "Revolution_Number_at_Epoch": 1587
+        }
     }
 }
