@@ -13,6 +13,7 @@ import re
 import json
 import pandas as pd
 import pyautogui
+import uuid
 
 import skyfield.api
 import skyfield.elementslib
@@ -263,6 +264,7 @@ print("Datos guardados en el archivo:", ruta_archivo)
 ruta_archivojson = "datos.json"
 # Crear un diccionario con los datos de la consulta actual
 consulta_actual = {
+    "id": str(uuid.uuid4()),  # Generar un identificador único
     "latitude": latitud,
     "longitude": longitud,
     "temperature": numberGrades,

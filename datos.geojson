@@ -5,13 +5,13 @@
         "coordinates": ["-73.61576533067957", "5.934299471956952"]
     },
     "properties": {
-        "temperature": "20",
-        "pressure": "1,014",
-        "localTime": "Mon Jul 24 2023 16:02:49 GMT-0500 (hora est\u00e1ndar de Colombia)",
-        "julianTime": "1690232569",
-        "utcTime": "4:02:58 PM",
-        "altitude": "489.85",
-        "elevation": "-45.8",
+        "temperature": "21",
+        "pressure": "1,017",
+        "localTime": "Tue Jul 25 2023 08:34:21 GMT-0500 (hora est\u00e1ndar de Colombia)",
+        "julianTime": "1690292061",
+        "utcTime": "8:34:30 AM",
+        "altitude": "499.82",
+        "elevation": "-5.2",
         "TLE": {
             "Norad_Id": 56205,
             "International_Classification": "Unclassified",
